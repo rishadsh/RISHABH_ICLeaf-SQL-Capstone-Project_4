@@ -30,14 +30,14 @@ INSERT INTO rental_data VALUES
 (114, 3, 'Drama', '2025-04-15', '2025-04-16', 3.25),
 (115, 2, 'Action', '2025-07-14', '2025-07-16', 5.49);
 
--- a) 📉 Drill Down: Genre → Individual Movie
+-- a) Drill Down: Analyze rentals from genre to individual movie level.
 
 SELECT GENRE, MOVIE_ID, COUNT(*) AS RENTAL_COUNT, SUM(RENTAL_FEE) AS TOTAL_REVENUE
 FROM rental_data
 GROUP BY GENRE, MOVIE_ID
 ORDER BY GENRE, MOVIE_ID;
 
--- b)  Rollup: Total rental fees by genre, then overall total
+-- b)  Rollup: Summarize total rental fees by genre and then overall.
 
 SELECT 
     IFNULL(GENRE, 'Total') AS GENRE,
@@ -46,8 +46,8 @@ FROM rental_data
 GROUP BY GENRE WITH ROLLUP;
 
 
--- c)  Cube (emulated): Total rental fees by combinations of GENRE, RENTAL_DATE, and CUSTOMER_ID
--- MySQL doesn't support CUBE() natively,but we can simulate it using GROUP BY GROUPING SETS logic manually.
+-- c)  Cube: Analyze total rental fees across combinations of genre, rental date, and
+    customer
 
 -- Total by all 3 dimensions
 SELECT GENRE, RENTAL_DATE, CUSTOMER_ID, SUM(RENTAL_FEE) AS TOTAL_RENTAL_FEE
@@ -102,11 +102,11 @@ UNION
 SELECT NULL, NULL, NULL, SUM(RENTAL_FEE)
 FROM rental_data;
 
--- d) Slice: Rentals from the 'Action' genre
+-- d) Slice: Extract rentals only from the ‘Action’ genre.
 
 SELECT * FROM rental_data
 WHERE GENRE = 'Action';
--- e)  Dice: Rentals where genre = 'Action' or 'Drama' AND rental date in last 3 months
+-- e)  Dice: Extract rentals where GENRE = 'Action' or 'Drama' and RENTAL_DATE is in the last 3 months
 
 SELECT * FROM rental_data
 WHERE GENRE IN ('Action', 'Drama')
